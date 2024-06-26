@@ -1,5 +1,5 @@
 import random
-import time  # To simulate delays for a more immersive experience
+import time
 
 class Character:
     def __init__(self, name, hp_range, damage_range, special_ability, story):
@@ -21,12 +21,12 @@ class Character:
 
     def introduce(self):
         print(self.story)
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
 
     def add_coins(self, amount):
         self.coins += amount
         print(f"Found {amount} coins! Total coins: {self.coins}")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
 
     def upgrade_max_hp(self, cost, increase):
         if self.coins >= cost:
@@ -37,7 +37,7 @@ class Character:
             print(f"Remaining coins: {self.coins}")
         else:
             print("Not enough coins to upgrade max HP.")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
 
     def upgrade_damage(self, cost, increase):
         if self.coins >= cost:
@@ -47,7 +47,7 @@ class Character:
             print(f"Remaining coins: {self.coins}")
         else:
             print("Not enough coins to upgrade damage.")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
 
     def donate_to_charity(self, amount):
         if self.coins >= amount:
@@ -56,7 +56,7 @@ class Character:
             print(f"Donated {amount} coins to charity. Total donations: {self.charity_donation}")
         else:
             print("Not enough coins to donate to charity.")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
 
 class Barbarian(Character):
     def __init__(self):
@@ -78,13 +78,13 @@ class Barbarian(Character):
 
     def choose_attack(self):
         print("Choose an attack:")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
         print("1. Double Swing (1.5x damage)")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
         print("2. Axe Swing (normal damage)")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
         print("3. Whirlwind (chance to deal damage or fail)")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
         choice = input("Enter the number of your choice: ")
 
         if choice == "1":
@@ -100,7 +100,7 @@ class Barbarian(Character):
     def double_swing(self):
         if random.random() < 0.25:  # 25% chance to make monster skip next turn
             print("Barbarian's Double Swing intimidates the monster!")
-            time.sleep(1)  # Delay for 1 second
+            time.sleep(0.5)
             return self.damage * 1.5
         else:
             return self.damage * 1.5
@@ -111,11 +111,11 @@ class Barbarian(Character):
     def whirlwind(self):
         if random.random() < 0.5:  # 50% chance
             print("Whirlwind successful!")
-            time.sleep(1)  # Delay for 1 second
+            time.sleep(0.5)
             return self.damage
         else:
             print("Whirlwind failed!")
-            time.sleep(1)  # Delay for 1 second
+            time.sleep(0.5)
             return 0
 
 class Archer(Character):
@@ -138,13 +138,13 @@ class Archer(Character):
 
     def choose_attack(self):
         print("Choose an attack:")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
         print("1. Double Arrow (2x damage)")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
         print("2. Fire Arrow (1.5x damage)")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
         print("3. Dagger (illusion effect)")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
         choice = input("Enter the number of your choice: ")
 
         if choice == "1":
@@ -166,7 +166,7 @@ class Archer(Character):
     def dagger(self):
         if random.random() < 0.25:  # 25% chance to make monster miss next attack
             print("Archer's Dagger creates an illusion, causing the monster to miss its next attack!")
-            time.sleep(1)  # Delay for 1 second
+            time.sleep(0.5)
             return 0
         else:
             return self.damage
@@ -191,13 +191,13 @@ class Mage(Character):
 
     def choose_attack(self):
         print("Choose an attack:")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
         print("1. Fire Ball (2x damage)")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
         print("2. Lightning Ball (2x damage, may hurt self)")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
         print("3. Ice Bolt (may freeze the monster)")
-        time.sleep(1)  # Delay for 1 second
+        time.sleep(0.5)
         choice = input("Enter the number of your choice: ")
 
         if choice == "1":
@@ -216,297 +216,179 @@ class Mage(Character):
     def lightning_ball(self):
         if random.random() < 0.5:  # 50% chance
             print("Lightning Ball hit both the monster and the Mage!")
-            time.sleep(1)  # Delay for 1 second
+            time.sleep(0.5)
             self.hp -= self.damage * 2
         return self.damage * 2
 
     def ice_bolt(self):
         if random.random() < 0.25:  # 25% chance to freeze
             print("Ice Bolt freezes the monster!")
-            time.sleep(1)  # Delay for 1 second
+            time.sleep(0.5)
             return "freeze"
         else:
             return self.damage
 
 class Monster:
-    def __init__(self, name, hp, damage, special_ability=None):
+    def __init__(self, name, hp, damage):
         self.name = name
-        self.hp = hp
-        self.damage = damage
-        self.special_ability = special_ability
-        self.special_ability_cooldown = 0
+        self.hp = hp + 100  # Increased HP by 100
+        self.damage = damage + 10  # Increased damage by 10
 
     def attack(self):
         return self.damage
-
-    def use_special_ability(self):
-        pass
 
 class TrollWarlord(Monster):
     def __init__(self):
-        super().__init__("Troll Warlord", 200, 25, "Double Swing")
-
-    def attack(self):
-        if self.special_ability_cooldown <= 0:
-            if random.random() < 0.1:  # 10% chance for Double Swing
-                print(f"{self.name} activates Double Swing!")
-                time.sleep(1)  # Delay for 1 second
-                self.special_ability_cooldown = 2  # 2-turn cooldown
-                return self.damage * 1.5
-        return self.damage
+        super().__init__("Troll Warlord", 400, 40)
 
 class RegularTroll(Monster):
     def __init__(self):
-        super().__init__("Regular Troll", 150, 15)
+        super().__init__("Regular Troll", 250, 25)
 
 class SkeletonWarrior(Monster):
     def __init__(self):
-        super().__init__("Skeleton Warrior", 100, 20, "Block")
-        self.block_chance = 0.3  # 30% chance to block an attack
+        super().__init__("Skeleton Warrior", 200, 30)
 
-    def attack(self):
-        if self.special_ability_cooldown <= 0:
-            if random.random() < 0.1:  # 10% chance to say something unclear
-                self.say_something_unclear()
-            return self.regular_attack()
+    def block_attack(self):
+        if random.random() < 0.2:  # 20% chance to block attack
+            print("Skeleton Warrior blocks the attack with its shield!")
+            time.sleep(0.5)
+            return True
         else:
-            print(f"{self.name}'s {self.special_ability} is on cooldown.")
-            time.sleep(1)  # Delay for 1 second
-            self.special_ability_cooldown -= 1
-            return 0
-
-    def regular_attack(self):
-        return self.damage
-
-    def use_special_ability(self):
-        if self.special_ability_cooldown <= 0:
-            if random.random() < self.block_chance:
-                print("Skeleton Warrior blocks the attack with its shield!")
-                time.sleep(1)  # Delay for 1 second
-                self.special_ability_cooldown = 2  # 2-turn cooldown
-                return True
-        return False
+            return False
 
 class Goblin(Monster):
     def __init__(self):
-        super().__init__("Goblin", 50, 10)
+        super().__init__("Goblin", 150, 20)
 
 class Lich(Monster):
     def __init__(self):
-        super().__init__("Lich", 350, 50, "Killing Blow")
-        self.killing_blow_chance = 0.5  # 50% chance for Killing Blow
-
-    def attack(self):
-        if self.special_ability_cooldown <= 0:
-            if random.random() < 0.1:  # 10% chance to say something unclear
-                self.say_something_unclear()
-            return self.regular_attack()
-        else:
-            print(f"{self.name}'s {self.special_ability} is on cooldown.")
-            time.sleep(1)  # Delay for 1 second
-            self.special_ability_cooldown -= 1
-            return 0
-
-    def regular_attack(self):
-        return self.damage
+        super().__init__("Lich", 450, 60)
 
     def use_special_ability(self):
-        if self.special_ability_cooldown <= 0:
-            if random.random() < self.killing_blow_chance:
-                print("Lich activates Killing Blow!")
-                time.sleep(1)  # Delay for 1 second
-                self.special_ability_cooldown = 2  # 2-turn cooldown
-                return 300
+        if random.random() < 0.5:  # 50% chance for Killing Blow
+            print("Lich summons dark energies for a deadly strike!")
+            time.sleep(0.5)
+            return 300
         return 0
 
+# Main game logic
 def choose_character():
-    print("Welcome to the Text RPG game!")
-    time.sleep(1)  # Delay for 1 second
-    print("Choose your class:")
-    time.sleep(1)  # Delay for 1 second
+    print("Welcome to the Text-based RPG!")
+    time.sleep(0.5)
+    print("Choose your character:")
+    time.sleep(0.5)
     print("1. Barbarian")
-    time.sleep(1)  # Delay for 1 second
+    time.sleep(0.5)
     print("2. Archer")
-    time.sleep(1)  # Delay for 1 second
+    time.sleep(0.5)
     print("3. Mage")
-    time.sleep(1)  # Delay for 1 second
+    time.sleep(0.5)
     choice = input("Enter the number of your choice: ")
 
     if choice == "1":
-        character = Barbarian()
+        return Barbarian()
     elif choice == "2":
-        character = Archer()
+        return Archer()
     elif choice == "3":
-        character = Mage()
+        return Mage()
     else:
         print("Invalid choice, defaulting to Barbarian.")
-        character = Barbarian()
-
-    character.introduce()
-    return character
-
-def relax(character):
-    print(f"{character.name} relaxes and restores 5 HP.")
-    time.sleep(1)  # Delay for 1 second
-    character.hp = min(character.max_hp, character.hp + 5)
-    character.add_coins(random.randint(20, 40))
+        return Barbarian()
 
 def hit_the_road(character):
-    events = [
-        "meet_an_adventurer",
-        "nothing_happens",
-        "meet_a_monster",
-        "find_shop"
-    ]
-    event = random.choices(events, weights=[0.2, 0.5, 0.2, 0.1], k=1)[0]
-    
-    if event == "meet_an_adventurer":
-        print("You meet a friendly adventurer who restores your HP to the max!")
-        time.sleep(1)  # Delay for 1 second
+    print("Hitting the road...")
+    time.sleep(0.5)
+    result = random.random()
+    if result < 0.05:  # 5% chance to meet an adventurer
+        print("You meet a fellow adventurer who restores your HP to the maximum!")
         character.hp = character.max_hp
-    elif event == "nothing_happens":
-        print("Nothing happens along the road.")
-        time.sleep(1)  # Delay for 1 second
-        character.add_coins(random.randint(20, 40))
-    elif event == "meet_a_monster":
-        print("You encounter a monster along the road!")
-        time.sleep(1)  # Delay for 1 second
-        monster = choose_monster()
+    elif result < 0.55:  # 50% chance nothing happens
+        print("Nothing eventful happens.")
+        found_coins = random.randint(1, 5)
+        character.add_coins(found_coins)
+    else:  # 40% chance to meet a monster
+        print("A wild monster appears!")
+        time.sleep(0.5)
+        monster = random.choice([TrollWarlord(), RegularTroll(), SkeletonWarrior(), Goblin(), Lich()])
         combat(character, monster)
-    elif event == "find_shop":
-        print("You find a shop!")
-        time.sleep(1)  # Delay for 1 second
-        visit_shop(character)
 
-def choose_monster():
-    monsters = [TrollWarlord(), RegularTroll(), SkeletonWarrior(), Goblin(), Lich()]
-    return random.choice(monsters)
+def combat(character, monster):
+    print(f"A wild {monster.name} appears!")
+    time.sleep(0.5)
 
-def combat(player, monster):
-    while player.hp > 0 and monster.hp > 0:
-        print(f"\n{player.name} attacks the {monster.name}!")
-        time.sleep(1)  # Delay for 1 second
-        
-        if isinstance(player, Barbarian):
-            damage = player.choose_attack()
-            if random.random() < 0.25:  # 25% chance to make monster skip next turn after Double Swing
-                print(f"{player.name} intimidates the monster, making it skip its next turn!")
-                time.sleep(1)  # Delay for 1 second
-                continue
+    while character.hp > 0 and monster.hp > 0:
+        # Character's turn
+        if character.special_ability_cooldown <= 0:
+            if isinstance(character, Barbarian) and random.random() < 0.1:
+                damage = character.use_special_ability()
+            elif isinstance(character, Mage) and random.random() < 0.1:
+                damage_or_freeze = character.use_special_ability()
+                if damage_or_freeze == "freeze":
+                    print(f"The {monster.name} is frozen and skips its turn!")
+                    time.sleep(0.5)
+                    continue
+                else:
+                    damage = damage_or_freeze
+            else:
+                damage = character.choose_attack()
 
-        elif isinstance(player, Archer):
-            damage = player.choose_attack()
-            if damage == 0:  # If Dagger causes illusion effect
-                print(f"{player.name} creates an illusion, causing the monster to miss its next attack!")
-                time.sleep(1)  # Delay for 1 second
-                continue
+            if damage > 0:
+                print(f"You hit the {monster.name} for {damage} damage!")
+                time.sleep(0.5)
+                monster.hp -= damage
 
-        elif isinstance(player, Mage):
-            damage = player.choose_attack()
-            if damage == "freeze":  # If Ice Bolt freezes the monster
-                print(f"{player.name} freezes the monster, making it skip its next turn!")
-                time.sleep(1)  # Delay for 1 second
-                continue
+        character.special_ability_cooldown -= 1
 
-        else:
-            damage = player.attack()
-
-        if isinstance(monster, SkeletonWarrior) and monster.use_special_ability():
-            continue
-
-        if player.hp <= 0:
-            print(f"{player.name} has been defeated!")
-            break
-
-        monster.hp -= damage
         if monster.hp <= 0:
-            print(f"{monster.name} has been defeated!")
-            time.sleep(1)  # Delay for 1 second
-            character.add_coins(random.randint(20, 40))
+            print(f"You have defeated the {monster.name}!")
+            time.sleep(0.5)
+            loot_coins = random.randint(2, 10)
+            character.add_coins(loot_coins)
             break
 
-        print(f"{player.name} has {player.hp} HP left.")
-        time.sleep(1)  # Delay for 1 second
+        # Monster's turn
+        if isinstance(monster, Lich) and random.random() < 0.05:
+            damage = monster.use_special_ability()
+        else:
+            damage = monster.attack()
 
-        print(f"\n{monster.name} attacks {player.name}!")
-        time.sleep(1)  # Delay for 1 second
-        
-        if random.random() < 0.1:  # 10% chance to say something unclear
-            monster.say_something_unclear()
-            time.sleep(1)  # Delay for 1 second
+        if isinstance(character, Archer) and random.random() < 0.25:
+            if character.dodge():
+                print("You dodged the attack!")
+                time.sleep(0.5)
+                continue
 
-        monster_damage = monster.attack()
+        if isinstance(monster, SkeletonWarrior):
+            if monster.block_attack():
+                print(f"The {monster.name} blocks your attack!")
+                time.sleep(0.5)
+                continue
 
-        if isinstance(player, Archer) and player.dodge():
-            print(f"{player.name} dodges the attack!")
-            time.sleep(1)  # Delay for 1 second
-            continue
-        
-        player.hp -= monster_damage
+        print(f"The {monster.name} attacks you for {damage} damage!")
+        time.sleep(0.5)
+        character.hp -= damage
 
-        print(f"{monster.name} has {monster.hp} HP left.")
-        time.sleep(1)  # Delay for 1 second
+    if character.hp <= 0:
+        print("You have been defeated...")
+        time.sleep(0.5)
 
-        if player.hp <= 0:
-            print(f"{player.name} has been defeated!")
-            break
-
-    if player.hp > 0:
-        print(f"{monster.name} has been defeated!")
-        time.sleep(1)  # Delay for 1 second
-    else:
-        print(f"{player.name} has been defeated!")
-        time.sleep(1)  # Delay for 1 second
-
-def visit_shop(character):
-    print("Welcome to the shop!")
-    time.sleep(1)  # Delay for 1 second
-    print(f"You currently have {character.coins} coins.")
-    time.sleep(1)  # Delay for 1 second
-    print("1. Upgrade max HP by +10 (cost: 15 coins)")
-    time.sleep(1)  # Delay for 1 second
-    print("2. Upgrade damage by +10 (cost: 20 coins)")
-    time.sleep(1)  # Delay for 1 second
-    print("3. Donate to charity (variable cost)")
-    time.sleep(1)  # Delay for 1 second
-    print("4. Leave the shop")
-    time.sleep(1)  # Delay for 1 second
-    choice = input("Enter the number of your choice: ")
-
-    if choice == "1":
-        character.upgrade_max_hp(15, 10)
-    elif choice == "2":
-        character.upgrade_damage(20, 10)
-    elif choice == "3":
-        amount = int(input("Enter the amount of coins you want to donate: "))
-        character.donate_to_charity(amount)
-    elif choice == "4":
-        print("Leaving the shop.")
-    else:
-        print("Invalid choice.")
-
-# Main game loop
+# Game setup
 character = choose_character()
+character.introduce()
+
 while character.hp > 0:
     print("\nWhat would you like to do?")
-    time.sleep(1)  # Delay for 1 second
+    time.sleep(0.5)
     print("1. Hit the road")
-    time.sleep(1)  # Delay for 1 second
-    print("2. Relax and restore")
-    time.sleep(1)  # Delay for 1 second
-    print("3. Visit the shop")
-    time.sleep(1)  # Delay for 1 second
-    print("4. Quit")
-    time.sleep(1)  # Delay for 1 second
+    time.sleep(0.5)
+    print("2. Quit")
+    time.sleep(0.5)
     choice = input("Enter the number of your choice: ")
 
     if choice == "1":
         hit_the_road(character)
     elif choice == "2":
-        relax(character)
-    elif choice == "3":
-        visit_shop(character)
-    elif choice == "4":
         print("Exiting the game.")
         break
     else:
