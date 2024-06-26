@@ -263,7 +263,7 @@ class Goblin(Monster):
 
 class Lich(Monster):
     def __init__(self):
-        super().__init__("Lich", 450, 60)
+        super().__init__("Lich", 550, 70)
 
     def use_special_ability(self):
         if random.random() < 0.5:  # 50% chance for Killing Blow
@@ -337,6 +337,7 @@ def combat(character, monster):
                 print(f"You hit the {monster.name} for {damage} damage!")
                 time.sleep(0.5)
                 monster.hp -= damage
+                print(f"Player's HP: {character.hp}, Monster's HP: {monster.hp}")
 
         character.special_ability_cooldown -= 1
 
@@ -368,6 +369,7 @@ def combat(character, monster):
         print(f"The {monster.name} attacks you for {damage} damage!")
         time.sleep(0.5)
         character.hp -= damage
+        print(f"Player's HP: {character.hp}, Monster's HP: {monster.hp}")
 
     if character.hp <= 0:
         print("You have been defeated...")
