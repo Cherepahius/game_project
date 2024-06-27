@@ -1,5 +1,6 @@
 import random
 import time
+from items import Potion
 
 class Character:
     def __init__(self, name, hp_range, damage_range, special_ability, story):
@@ -12,6 +13,7 @@ class Character:
         self.coins = 0
         self.charity_donation = 0
         self.special_ability_cooldown = 0
+        self.inventory = [Potion(1)]
 
     def attack(self):
         return self.damage
@@ -22,6 +24,16 @@ class Character:
     def introduce(self):
         print(self.story)
         time.sleep(0.5)
+
+    def view_stats(self):
+        print (f"{self.hp} / {self.max_hp} HP\n{self.coins} Coins\nand {self.damage} Strangth")
+        time.sleep(0.5)
+    
+    def add_item(self):
+        self.inventory.append(Potion(random.randint(1,3)))
+        print("You found a potion")
+        time.sleep(0.5)
+        
 
     def add_coins(self, amount):
         self.coins += amount
@@ -48,6 +60,37 @@ class Character:
         else:
             print("Not enough coins to upgrade damage.")
         time.sleep(0.5)
+
+    def view_inventory(self):
+        if len(self.inventory) <= 0:
+            print("you currently don't have anything in your inventory")
+            time.sleep(0.5)
+        else:
+            for key, value in enumerate(self.inventory):
+                print(f"{key + 1} : {value.name}")
+                time.sleep(0.5)
+                player_input = input("Pick an item: ")
+                if player_input.isdigit():
+                    self.use_potion(int(player_input) - 1)
+                else:
+                    pass
+
+    def use_potion(self, player_input):
+            if int(player_input) <= (len(self.inventory)):
+                if self.hp < self.max_hp:
+                    potion = self.inventory[player_input].use()
+                    self.inventory.pop(player_input)
+                    if potion < 999:
+                        self.hp += potion
+                        if self.hp > self.max_hp:
+                            self.hp = self.max_hp
+                    else:
+                        self.hp = self.max_hp
+                else:
+                    print("Can't use a potion while your health is full")
+                    time.sleep(0.5)
+            else:
+                pass
 
     def donate_to_charity(self, amount):
         if self.coins >= amount:
