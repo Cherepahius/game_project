@@ -15,7 +15,6 @@ class Character:
         self.special_ability_cooldown = 0
         self.level = 1
         self.experience = 0
-
         self.inventory = [Potion(1)]
 
     def attack(self):
