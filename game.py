@@ -2,6 +2,8 @@ import time
 import random
 from player import Barbarian, Archer, Mage
 from monster import TrollWarlord, RegularTroll, SkeletonWarrior, Goblin, Lich
+from items import Equipment
+
 
 
 
@@ -90,12 +92,15 @@ def combat(character, monster):
         if monster.hp <= 0:
             print(f"You have defeated the {monster.name}!")
             chance_for_potion = random.randint(1, 10)
+            other_loot = random.randint(1, 10)
             time.sleep(0.5)
             loot_coins = random.randint(2, 10)
             character.add_coins(loot_coins)
             character.gain_experience(100)
             if chance_for_potion == 1:
                 character.add_item()
+            if other_loot >= 7:
+                character.add_equipment(monster.loot)
             break
 
         # Monster's turn

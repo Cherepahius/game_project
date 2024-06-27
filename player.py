@@ -28,13 +28,27 @@ class Character:
         time.sleep(0.5)
 
     def view_stats(self):
-        print (f"{self.hp} / {self.max_hp} HP\n{self.coins} Coins\nand {self.damage} Strangth")
+        print (f"level {self.level}\n{self.experience} XP\n you need another {(self.level * 100) - self.experience} to go up a level\n{self.hp} / {self.max_hp} HP\n{self.coins} Coins\nand {self.damage} Strangth")
         time.sleep(0.5)
     
     def add_item(self):
         self.inventory.append(Potion(random.randint(1,3)))
         print("You found a potion")
         time.sleep(0.5)
+
+    
+                
+
+    def add_equipment(self, equipment):
+        upgrade = equipment.use()
+        if "Weapon" in equipment.name:
+            self.damage += upgrade
+            print(f"You got {equipment.name}, your damage increases to {self.damage}")
+        elif "Armor" in equipment.name:
+            self.max_hp += upgrade
+            self.hp += upgrade
+            print(f"You got {equipment.name}, your HP increases to {self.max_hp}")
+
 
     def get_equipment(self, equipment):
         bonus = equipment.use()
@@ -61,6 +75,7 @@ class Character:
         if self.experience >= xp_to_next_level:
             self.level += 1
             self.experience -= xp_to_next_level
+            increase = self.max_hp + 15
             self.max_hp += 15
             self.hp = self.max_hp
             print(f"Upgraded max HP by {increase}.")
