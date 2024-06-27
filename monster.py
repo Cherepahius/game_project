@@ -5,7 +5,8 @@ class Monster:
     def __init__(self, name, hp, damage):
         self.name = name
         self.hp = hp 
-        self.damage = damage  
+        self.damage = damage
+          
 
     def attack(self):
         return self.damage

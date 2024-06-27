@@ -57,3 +57,21 @@ class Equipment():
             return 5
         else:
             return 10
+        
+
+
+class Store():
+    def __init__(self) -> None:
+        potions_for_sale = [Potion(1), Potion(2), Potion(3)]
+        list_of_equipment = [Equipment(1), Equipment(2), Equipment(3), Equipment(4), Equipment(5), Equipment(6)]
+        self.inventory = {
+            potions_for_sale[1].price : potions_for_sale[1].name,
+            potions_for_sale[2].price : potions_for_sale[2].name,
+            potions_for_sale[3].price : potions_for_sale[3].name,
+            list_of_equipment[1].price : list_of_equipment[1].name,
+            list_of_equipment[2].price : list_of_equipment[2].name,
+            list_of_equipment[3].price : list_of_equipment[3].name,
+            list_of_equipment[4].price : list_of_equipment[4].name,
+            list_of_equipment[5].price : list_of_equipment[5].name,
+            list_of_equipment[6].price : list_of_equipment[6].name
+            }

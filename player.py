@@ -1,6 +1,6 @@
 import random
 import time
-from items import Potion
+from items import Potion, Equipment
 
 class Character:
     def __init__(self, name, hp_range, damage_range, special_ability, story):
@@ -35,6 +35,14 @@ class Character:
         self.inventory.append(Potion(random.randint(1,3)))
         print("You found a potion")
         time.sleep(0.5)
+
+    def get_equipment(self, equipment):
+        bonus = equipment.use()
+        if bonus <= 3:
+            self.damage += bonus
+        else:
+            self.max_hp += bonus
+            self.hp += bonus
         
 
     def add_coins(self, amount):
