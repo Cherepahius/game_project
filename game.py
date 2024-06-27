@@ -44,7 +44,7 @@ def hit_the_road(character):
         else:
             character.add_item()
     else:  # 40% chance to meet a monster
-        print("A wild monster appears!")
+        #print("A wild monster appears!")
         time.sleep(0.5)
         monster = random.choice([TrollWarlord(), RegularTroll(), SkeletonWarrior(), Goblin(), Lich()])
         combat(character, monster)
@@ -92,6 +92,7 @@ def combat(character, monster):
             time.sleep(0.5)
             loot_coins = random.randint(2, 10)
             character.add_coins(loot_coins)
+            character.gain_experience(100)
             break
 
         # Monster's turn

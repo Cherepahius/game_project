@@ -14,6 +14,10 @@ class Character:
         self.charity_donation = 0
         self.special_ability_cooldown = 0
         self.inventory = [Potion(1)]
+        self.level = 1
+        self.experience = 0
+
+
 
     def attack(self):
         return self.damage
@@ -39,6 +43,7 @@ class Character:
         self.coins += amount
         print(f"Found {amount} coins! Total coins: {self.coins}")
         time.sleep(0.5)
+
 
     def upgrade_max_hp(self, cost, increase):
         if self.coins >= cost:
@@ -99,8 +104,25 @@ class Character:
             print(f"Donated {amount} coins to charity. Total donations: {self.charity_donation}")
         else:
             print("Not enough coins to donate to charity.")
-        time.sleep(0.5)
 
+    def gain_experience(self, amount):
+        self.experience += amount
+        print(f"You gained {amount} experience! Total experience: {self.experience}")
+
+        time.sleep(0.5)
+        self.check_level_up()
+
+    def check_level_up(self):
+        xp_to_next_level = self.level * 100
+        if self.experience >= xp_to_next_level:
+            self.level += 1
+            self.experience -= xp_to_next_level
+            self.max_hp += 15
+            self.hp = self.max_hp
+            self.damage += 10
+            print(f"You leveled up to level {self.level}!Your damage increased by 10 points and your health increased by 15 points! And now your total damage is {self.damage}! And your total health is {self.hp}!")
+            print(f"You need {xp_to_next_level - self.experience} more experience to level up!")
+            time.sleep(0.5)        
 class Barbarian(Character):
     def __init__(self):
         super().__init__("Barbarian", (120, 150), (100, 120), "Killing Blow", 
