@@ -1,14 +1,12 @@
-import time
 import random
+import time
 from player import Barbarian, Archer, Mage
 from monster import TrollWarlord, RegularTroll, SkeletonWarrior, Goblin, Lich
-from items import Equipment, Potion
 
-
-def choose_character():
-    print("Welcome to the Text-based RPG!")
+def game_setup():
+    print("Welcome to the adventure game!")
     time.sleep(0.5)
-    print("Choose your character:")
+    print("Choose your character class:")
     time.sleep(0.5)
     print("1. Barbarian")
     time.sleep(0.5)
@@ -19,142 +17,163 @@ def choose_character():
     choice = input("Enter the number of your choice: ")
 
     if choice == "1":
-        return Barbarian()
+        player = Barbarian()
+        print("You are a strong warrior who wants to be the greatest warrior of all time!")
     elif choice == "2":
-        return Archer()
+        player = Archer()
+        print("You are a banished elf who wants to atone for your guilt and return to the elf city.")
     elif choice == "3":
-        return Mage()
+        player = Mage()
+        print("You are a great mage with a dream to become an archmage.")
     else:
         print("Invalid choice, defaulting to Barbarian.")
-        return Barbarian()
+        player = Barbarian()
 
-def hit_the_road(character):
-    print("Hitting the road...")
-    time.sleep(0.5)
-    result = random.random()
-    if result < 0.05:  # 5% chance to meet an adventurer
-        print("You meet a fellow adventurer who restores your HP to the maximum!")
-        character.hp = character.max_hp
-    elif result < 0.55:  # 50% chance nothing happens
-        print("Nothing eventful happens.")
-        found_item = random.randint(1,4)
-        if found_item > 1:
-            found_coins = random.randint(1, 5)
-            character.add_coins(found_coins)
-        else:
-            character.add_item()
-    else:  # 40% chance to meet a monster
-        #print("A wild monster appears!")
-        time.sleep(0.5)
-        monster = random.choice([TrollWarlord(), RegularTroll(), SkeletonWarrior(), Goblin(), Lich()])
-        combat(character, monster)
+    player.introduce()
+    return player
 
-def check_inventory(character):
-    character.view_inventory()
-    time.sleep(0.5)
-
-def check_stats(character):
-    print ("here are your stats")
-    time.sleep(0.5)
-    character.view_stats()
-    time.sleep(0.5)
-
-def combat(character, monster):
+def encounter_monster(player):
+    monsters = [TrollWarlord(), RegularTroll(), SkeletonWarrior(), Goblin(), Lich()]
+    monster = random.choice(monsters)
     print(f"A wild {monster.name} appears!")
     time.sleep(0.5)
 
-    while character.hp > 0 and monster.hp > 0:
-        # Character's turn
-        if character.special_ability_cooldown <= 0:
-            if isinstance(character, Barbarian) and random.random() < 0.1:
-                damage = character.use_special_ability()
-            elif isinstance(character, Mage) and random.random() < 0.1:
-                damage_or_freeze = character.use_special_ability()
-                if damage_or_freeze == "freeze":
-                    print(f"The {monster.name} is frozen and skips its turn!")
-                    time.sleep(0.5)
-                    continue
-                else:
-                    damage = damage_or_freeze
-            else:
-                damage = character.choose_attack()
+    while player.hp > 0 and monster.hp > 0:
+        print(f"{player.name} HP: {player.hp}/{player.max_hp}")
+        print(f"{monster.name} HP: {monster.hp}")
+        attack_choice = player.choose_attack()
+        attack_method = getattr(player, attack_choice, None)
+        if attack_method:
+            damage_dealt, enemy_stunned = attack_method()
+        else:
+            damage_dealt, enemy_stunned = player.normal_attack()
 
-            if damage > 0:
-                print(f"You hit the {monster.name} for {damage} damage!")
-                time.sleep(0.5)
-                monster.hp -= damage
-                print(f"Player's HP: {character.hp}, Monster's HP: {monster.hp}")
+        if random.random() < player.killing_blow_chance:
+            print(f"{player.name} landed a killing blow!")
+            damage_dealt = 300
 
-        character.special_ability_cooldown -= 1
+        monster.hp -= damage_dealt
+        print(f"{monster.name} HP left: {monster.hp}")
 
         if monster.hp <= 0:
-            print(f"You have defeated the {monster.name}!")
-            chance_for_potion = random.randint(1, 10)
-            other_loot = random.randint(1, 10)
-            time.sleep(0.5)
-            loot_coins = random.randint(2, 10)
-            character.add_coins(loot_coins)
-            character.gain_experience(100)
-            if chance_for_potion == 1:
-                character.add_item()
-            if other_loot >= 7:
-                character.add_equipment(monster.loot)
+            coins_found = random.randint(2, 10)
+            player.add_coins(coins_found)
+            exp_gained = 50
+            player.gain_experience(exp_gained)
+            print(f"You defeated the {monster.name}!")
             break
 
-        # Monster's turn
-        if isinstance(monster, Lich) and random.random() < 0.05:
-            damage = monster.use_special_ability()
+        if not enemy_stunned:
+            if isinstance(player, Archer) and random.random() < player.dodge_chance:
+                print(f"{player.name} dodged the attack!")
+                monster_attack = 0
+            else:
+                monster_attack, player_stunned = monster.attack()
+                if random.random() < player.dodge_chance:
+                    print(f"{player.name} dodged the attack!")
+                    monster_attack = 0
+
+            player.hp -= monster_attack
+            print(f"{player.name} HP left: {player.hp}")
+
+            if player_stunned:
+                print(f"The {monster.name}'s attack stunned {player.name}!")
         else:
-            damage = monster.attack()
+            print(f"The {monster.name} is stunned and misses its turn!")
 
-        if isinstance(character, Archer) and random.random() < 0.25:
-            if character.dodge():
-                print("You dodged the attack!")
-                time.sleep(0.5)
-                continue
+        if player.hp <= 0:
+            print(f"You were defeated by the {monster.name}.")
+            break
 
-        if isinstance(monster, SkeletonWarrior):
-            if monster.block_attack():
-                print(f"The {monster.name} blocks your attack!")
-                time.sleep(0.5)
-                continue
-
-        print(f"The {monster.name} attacks you for {damage} damage!")
+def main_game_loop(player):
+    turns = 0
+    while True:
+        print("What would you like to do?")
         time.sleep(0.5)
-        character.hp -= damage
-        print(f"Player's HP: {character.hp}, Monster's HP: {monster.hp}")
-
-    if character.hp <= 0:
-        print("You have been defeated...")
+        print("1. Hit the road")
         time.sleep(0.5)
+        print("2. Relax and recover")
+        time.sleep(0.5)
+        print("3. Quit the game")
+        choice = input("Enter the number of your choice: ")
 
-# Game setup
-character = choose_character()
-character.introduce()
+        if choice == "1":
+            turns += 1
+            if random.random() < 0.05:
+                player.hp = player.max_hp
+                print("You met a friendly adventurer who restored your HP to the max!")
+            elif random.random() < 0.4:
+                encounter_monster(player)
+                if player.hp <= 0:
+                    print("Game over!")
+                    break
+            elif random.random() < 0.5:
+                coins_found = random.randint(1, 5)
+                player.add_coins(coins_found)
+            else:
+                print("Nothing happened.")
 
-while character.hp > 0:
-    print("\nWhat would you like to do?")
-    time.sleep(0.5)
-    print("1. Hit the road")
-    time.sleep(0.5)
-    print("2. Check Stats")
-    time.sleep(0.5)
-    print("3. Check Inventory")
-    time.sleep(0.5)
-    print("4. Quit")
-    time.sleep(0.5)
-    choice = input("Enter the number of your choice: ")
+            if turns >= 5:
+                print("You have reached the city!")
+                city(player)
+                turns = 0
 
-    if choice == "1":
-        hit_the_road(character)
-    elif choice == "2":
-        check_stats(character)
-    elif choice == "3":
-        check_inventory(character)
-    elif choice == "4":
-        print("Exiting the game.")
-        break
-    else:
-        print("Invalid choice.")
+        elif choice == "2":
+            player.hp = min(player.max_hp, player.hp + 5)
+            print(f"You relaxed and recovered. Current HP: {player.hp}/{player.max_hp}")
+        elif choice == "3":
+            print("Thank you for playing!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
 
-print("Game over. Thanks for playing!")
+def city(player):
+    city_turns = 10
+    while city_turns > 0:
+        print("You are in the city. What would you like to do?")
+        time.sleep(0.5)
+        print("1. Go to the tavern")
+        time.sleep(0.5)
+        print("2. Go to the city square")
+        time.sleep(0.5)
+        print("3. Leave the city")
+        choice = input("Enter the number of your choice: ")
+
+        if choice == "1":
+            print("Welcome to the tavern! You can restore your HP to the maximum for 20 coins.")
+            tavern_choice = input("Would you like to restore your HP? (yes/no): ")
+            if tavern_choice.lower() == "yes" and player.coins >= 20:
+                player.hp = player.max_hp
+                player.coins -= 20
+                print(f"Your HP is now fully restored. Current HP: {player.hp}/{player.max_hp}")
+            elif tavern_choice.lower() == "yes" and player.coins < 20:
+                print("You don't have enough coins.")
+            else:
+                print("You decided not to restore your HP.")
+        elif choice == "2":
+            if city_turns > 0:
+                event_chance = random.random()
+                if event_chance < 0.25:
+                    coins_lost = random.randint(1, 10)
+                    player.coins = max(0, player.coins - coins_lost)
+                    print(f"Rogues stole {coins_lost} coins! Current coins: {player.coins}")
+                elif event_chance < 0.25:
+                    hp_lost = random.randint(5, 15)
+                    player.hp = max(0, player.hp - hp_lost)
+                    print(f"Warriors punched you and you lost {hp_lost} HP! Current HP: {player.hp}/{player.max_hp}")
+                else:
+                    coins_found = random.randint(5, 15)
+                    player.add_coins(coins_found)
+                    #print(f"You found {coins_found} coins in the city square!")
+                city_turns -= 1
+            else:
+                print("You have used all your turns in the city square.")
+        elif choice == "3":
+            print("You leave the city and continue your adventure.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    player = game_setup()
+    main_game_loop(player)
