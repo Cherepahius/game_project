@@ -16,7 +16,7 @@ class Character:
         self.inventory = [Potion(1)]
         self.level = 1
         self.experience = 0
-        self.inventory = [Potion(1)]
+
 
     def attack(self):
         return self.damage
@@ -49,15 +49,6 @@ class Character:
             self.max_hp += upgrade
             self.hp += upgrade
             print(f"You got {equipment.name}, your HP increases to {self.max_hp}")
-
-
-    def get_equipment(self, equipment):
-        bonus = equipment.use()
-        if bonus <= 3:
-            self.damage += bonus
-        else:
-            self.max_hp += bonus
-            self.hp += bonus
         
 
     def add_coins(self, amount):
