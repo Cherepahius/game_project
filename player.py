@@ -1,5 +1,6 @@
 import random
 import time
+from items import Potion, Equipment
 
 class Player:
     def __init__(self, name, max_hp, damage, killing_blow_chance=0, dodge_chance=0):
@@ -12,6 +13,30 @@ class Player:
         self.coins = 0
         self.experience = 0
         self.level = 1
+        self.inventory = [Potiion(1)]
+
+
+    def view_stats(self):
+        print (f"level {self.level}\n{self.experience} XP\n you need another {(self.level * 100) - self.experience} to go up a level\n{self.hp} / {self.max_hp} HP\n{self.coins} Coins\nand {self.damage} Strangth")
+        time.sleep(0.5)
+    
+    def add_item(self):
+        self.inventory.append(Potion(random.randint(1,3)))
+        print("You found a potion")
+        time.sleep(0.5)
+
+    
+                
+
+    def add_equipment(self, equipment):
+        upgrade = equipment.use()
+        if "Weapon" in equipment.name:
+            self.damage += upgrade
+            print(f"You got {equipment.name}, your damage increases to {self.damage}")
+        elif "Armor" in equipment.name:
+            self.max_hp += upgrade
+            self.hp += upgrade
+            print(f"You got {equipment.name}, your HP increases to {self.max_hp}")
 
     def add_coins(self, amount):
         self.coins += amount
@@ -22,6 +47,37 @@ class Player:
         print(f"You gained {amount} experience points! Total EXP: {self.experience}")
         if self.experience >= self.level * 100:
             self.level_up()
+
+    def view_inventory(self):
+        if len(self.inventory) <= 0:
+            print("you currently don't have anything in your inventory")
+            time.sleep(0.5)
+        else:
+            for key, value in enumerate(self.inventory):
+                print(f"{key + 1} : {value.name}")
+                time.sleep(0.5)
+                player_input = input("Pick an item: ")
+                if player_input.isdigit():
+                    self.use_potion(int(player_input) - 1)
+                else:
+                    pass
+
+    def use_potion(self, player_input):
+            if int(player_input) <= (len(self.inventory)):
+                if self.hp < self.max_hp:
+                    potion = self.inventory[player_input].use()
+                    self.inventory.pop(player_input)
+                    if potion < 999:
+                        self.hp += potion
+                        if self.hp > self.max_hp:
+                            self.hp = self.max_hp
+                    else:
+                        self.hp = self.max_hp
+                else:
+                    print("Can't use a potion while your health is full")
+                    time.sleep(0.5)
+            else:
+                pass
 
     def level_up(self):
         self.level += 1
