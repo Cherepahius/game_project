@@ -2,6 +2,8 @@ import time
 import random
 from player import Barbarian, Archer, Mage
 from monster import TrollWarlord, RegularTroll, SkeletonWarrior, Goblin, Lich
+from items import Equipment, Potion
+
 
 def choose_character():
     print("Welcome to the Text-based RPG!")
@@ -35,13 +37,27 @@ def hit_the_road(character):
         character.hp = character.max_hp
     elif result < 0.55:  # 50% chance nothing happens
         print("Nothing eventful happens.")
-        found_coins = random.randint(1, 5)
-        character.add_coins(found_coins)
+        found_item = random.randint(1,4)
+        if found_item > 1:
+            found_coins = random.randint(1, 5)
+            character.add_coins(found_coins)
+        else:
+            character.add_item()
     else:  # 40% chance to meet a monster
-        print("A wild monster appears!")
+        #print("A wild monster appears!")
         time.sleep(0.5)
         monster = random.choice([TrollWarlord(), RegularTroll(), SkeletonWarrior(), Goblin(), Lich()])
         combat(character, monster)
+
+def check_inventory(character):
+    character.view_inventory()
+    time.sleep(0.5)
+
+def check_stats(character):
+    print ("here are your stats")
+    time.sleep(0.5)
+    character.view_stats()
+    time.sleep(0.5)
 
 def combat(character, monster):
     print(f"A wild {monster.name} appears!")
@@ -73,9 +89,16 @@ def combat(character, monster):
 
         if monster.hp <= 0:
             print(f"You have defeated the {monster.name}!")
+            chance_for_potion = random.randint(1, 10)
+            other_loot = random.randint(1, 10)
             time.sleep(0.5)
             loot_coins = random.randint(2, 10)
             character.add_coins(loot_coins)
+            character.gain_experience(100)
+            if chance_for_potion == 1:
+                character.add_item()
+            if other_loot >= 7:
+                character.add_equipment(monster.loot)
             break
 
         # Monster's turn
@@ -114,13 +137,21 @@ while character.hp > 0:
     time.sleep(0.5)
     print("1. Hit the road")
     time.sleep(0.5)
-    print("2. Quit")
+    print("2. Check Stats")
+    time.sleep(0.5)
+    print("3. Check Inventory")
+    time.sleep(0.5)
+    print("4. Quit")
     time.sleep(0.5)
     choice = input("Enter the number of your choice: ")
 
     if choice == "1":
         hit_the_road(character)
     elif choice == "2":
+        check_stats(character)
+    elif choice == "3":
+        check_inventory(character)
+    elif choice == "4":
         print("Exiting the game.")
         break
     else:
