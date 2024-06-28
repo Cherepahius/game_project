@@ -2,6 +2,7 @@ import random
 import time
 from player import Barbarian, Archer, Mage
 from monster import TrollWarlord, RegularTroll, SkeletonWarrior, Goblin, Lich
+from items import Equipment, Potion
 
 def game_setup():
     print("Welcome to the adventure game!")
