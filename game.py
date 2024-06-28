@@ -2,6 +2,10 @@ import time
 import random
 from player import Barbarian, Archer, Mage
 from monster import TrollWarlord, RegularTroll, SkeletonWarrior, Goblin, Lich
+from items import Equipment
+
+
+
 
 def choose_character():
     print("Welcome to the Text-based RPG!")
@@ -26,6 +30,7 @@ def choose_character():
         print("Invalid choice, defaulting to Barbarian.")
         return Barbarian()
 
+<<<<<<< HEAD
 import random
 import time
 
@@ -50,6 +55,25 @@ class Character:
 
     def introduce(self):
         print(self.story)
+=======
+def hit_the_road(character):
+    print("Hitting the road...")
+    time.sleep(0.5)
+    result = random.random()
+    if result < 0.05:  # 5% chance to meet an adventurer
+        print("You meet a fellow adventurer who restores your HP to the maximum!")
+        character.hp = character.max_hp
+    elif result < 0.55:  # 50% chance nothing happens
+        print("Nothing eventful happens.")
+        found_item = random.randint(1,4)
+        if found_item > 1:
+            found_coins = random.randint(1, 5)
+            character.add_coins(found_coins)
+        else:
+            character.add_item()
+    else:  # 40% chance to meet a monster
+        #print("A wild monster appears!")
+>>>>>>> 088337b4009dcf70f644bad2eee70b7241475207
         time.sleep(0.5)
 
     def add_coins(self, amount):
@@ -305,6 +329,16 @@ class DamageBoost(Item):
         character.damage += 10
 
 
+def check_inventory(character):
+    character.view_inventory()
+    time.sleep(0.5)
+
+def check_stats(character):
+    print ("here are your stats")
+    time.sleep(0.5)
+    character.view_stats()
+    time.sleep(0.5)
+
 def combat(character, monster):
     print(f"A wild {monster.name} appears!")
     time.sleep(0.5)
@@ -335,9 +369,16 @@ def combat(character, monster):
 
         if monster.hp <= 0:
             print(f"You have defeated the {monster.name}!")
+            chance_for_potion = random.randint(1, 10)
+            other_loot = random.randint(1, 10)
             time.sleep(0.5)
             loot_coins = random.randint(2, 10)
             character.add_coins(loot_coins)
+            character.gain_experience(100)
+            if chance_for_potion == 1:
+                character.add_item()
+            if other_loot >= 7:
+                character.add_equipment(monster.loot)
             break
 
         # Monster's turn
@@ -374,14 +415,27 @@ character.introduce()
 while character.hp > 0:
     print("\nWhat would you like to do?")
     print("1. Hit the road")
+<<<<<<< HEAD
     print("2. Shop")
     print("3. Use Healing Potion")
     print("4. Use Damage Boost")
     print("5. Quit")
     choice = input("Enter your choice (1-5): ")
+=======
+    time.sleep(0.5)
+    print("2. Check Stats")
+    time.sleep(0.5)
+    print("3. Check Inventory")
+    time.sleep(0.5)
+    print("4. Quit")
+    time.sleep(0.5)
+    choice = input("Enter the number of your choice: ")
+
+>>>>>>> 088337b4009dcf70f644bad2eee70b7241475207
     if choice == "1":
            hit_the_road(player)
     elif choice == "2":
+<<<<<<< HEAD
             shop_menu(player)
     elif choice == "3":
             use_healing_potion(player)
@@ -389,6 +443,14 @@ while character.hp > 0:
             use_damage_boost(player)
     elif choice == "5":
             quit_game()
+=======
+        check_stats(character)
+    elif choice == "3":
+        check_inventory(character)
+    elif choice == "4":
+        print("Exiting the game.")
+        break
+>>>>>>> 088337b4009dcf70f644bad2eee70b7241475207
     else:
             print("Invalid choice. Please choose again.")
 
