@@ -2,7 +2,8 @@ import random
 import time
 from player import Barbarian, Archer, Mage
 from monster import TrollWarlord, RegularTroll, SkeletonWarrior, Goblin, Lich
-from items import Equipment, Potion
+from items import Store
+
 
 def game_setup():
     print("Welcome to the adventure game!")
@@ -43,22 +44,32 @@ def encounter_monster(player):
         print(f"{player.name} HP: {player.hp}/{player.max_hp}")
         print(f"{monster.name} HP: {monster.hp}")
         attack_choice = player.choose_attack()
-        attack_method = getattr(player, attack_choice, None)
-        if attack_method:
-            damage_dealt, enemy_stunned = attack_method()
+        if attack_choice == 0:
+            continue
+        elif attack_choice == 1:
+            print(f"{player.name} used a potion and now has HP: {player.hp}/{player.max_hp}")
+            damage_dealt = 0
+            enemy_stunned = False
         else:
-            damage_dealt, enemy_stunned = player.normal_attack()
+            attack_method = getattr(player, attack_choice, None)
+            if attack_method:
+                damage_dealt, enemy_stunned = attack_method()
+            else:
+                damage_dealt, enemy_stunned = player.normal_attack()
 
-        if random.random() < player.killing_blow_chance:
-            print(f"{player.name} landed a killing blow!")
-            damage_dealt = 300
+            if random.random() < player.killing_blow_chance:
+                print(f"{player.name} landed a killing blow!")
+                damage_dealt = 300
 
         monster.hp -= damage_dealt
         print(f"{monster.name} HP left: {monster.hp}")
 
         if monster.hp <= 0:
+            loot_drop = random.randint(1, 10)
             coins_found = random.randint(2, 10)
             player.add_coins(coins_found)
+            if loot_drop >= 6:
+                player.add_equipment(monster.loot)
             exp_gained = 50
             player.gain_experience(exp_gained)
             print(f"You defeated the {monster.name}!")
@@ -95,7 +106,11 @@ def main_game_loop(player):
         time.sleep(0.5)
         print("2. Relax and recover")
         time.sleep(0.5)
-        print("3. Quit the game")
+        print("3. Check Stats")
+        time.sleep(0.5)
+        print("4. Check Inventory")
+        time.sleep(0.5)
+        print("5. Quit the game")
         choice = input("Enter the number of your choice: ")
 
         if choice == "1":
@@ -123,6 +138,10 @@ def main_game_loop(player):
             player.hp = min(player.max_hp, player.hp + 5)
             print(f"You relaxed and recovered. Current HP: {player.hp}/{player.max_hp}")
         elif choice == "3":
+            player.view_stats()
+        elif choice == "4":
+            player.view_inventory()
+        elif choice == "5":
             print("Thank you for playing!")
             break
         else:
@@ -135,9 +154,11 @@ def city(player):
         time.sleep(0.5)
         print("1. Go to the tavern")
         time.sleep(0.5)
-        print("2. Go to the city square")
+        print("2. Go to the shop")
         time.sleep(0.5)
-        print("3. Leave the city")
+        print("3. Go to the city square")
+        time.sleep(0.5)
+        print("4. Leave the city")
         choice = input("Enter the number of your choice: ")
 
         if choice == "1":
@@ -152,6 +173,25 @@ def city(player):
             else:
                 print("You decided not to restore your HP.")
         elif choice == "2":
+            shop = Store()
+            shop.view_store()
+            shop_choice = input(f"Please input the Item you would like to buy: ")
+            if shop_choice.isdigit():
+                if int(shop_choice) <= 3 and int(shop_choice) > 0:
+                    if player.coins >= shop.potions_for_sale[int(shop_choice) - 1].price:
+                        player.add_item(shop.potions_for_sale[int(shop_choice) - 1])
+                        player.coins -= shop.potions_for_sale[int(shop_choice) - 1].price
+                    else:
+                        print("You don't have the coins to buy that")
+                elif int(shop_choice) <= 9:
+                    if player.coins >= shop.list_of_equipment[int(shop_choice) - 4].price:
+                        player.add_equipment(shop.list_of_equipment[int(shop_choice) - 4])
+                        player.coins -= shop.list_of_equipment[int(shop_choice) - 4].price
+                    else:
+                        print("You don't have the coins to buy that")
+                else:
+                    print("You decided not to buy anything")
+        elif choice == "3":
             if city_turns > 0:
                 event_chance = random.random()
                 if event_chance < 0.25:
@@ -169,7 +209,7 @@ def city(player):
                 city_turns -= 1
             else:
                 print("You have used all your turns in the city square.")
-        elif choice == "3":
+        elif choice == "4":
             print("You leave the city and continue your adventure.")
             break
         else:
