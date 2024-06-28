@@ -1,6 +1,5 @@
 import random
 import time
-from items import Potion
 
 class Character:
     def __init__(self, name, hp_range, damage_range, special_ability, story):
@@ -13,7 +12,7 @@ class Character:
         self.coins = 0
         self.charity_donation = 0
         self.special_ability_cooldown = 0
-        self.inventory = [Potion(1)]
+        self.items = []
 
     def attack(self):
         return self.damage
@@ -25,82 +24,12 @@ class Character:
         print(self.story)
         time.sleep(0.5)
 
-    def view_stats(self):
-        print (f"{self.hp} / {self.max_hp} HP\n{self.coins} Coins\nand {self.damage} Strangth")
-        time.sleep(0.5)
-    
-    def add_item(self):
-        self.inventory.append(Potion(random.randint(1,3)))
-        print("You found a potion")
-        time.sleep(0.5)
-        
-
     def add_coins(self, amount):
         self.coins += amount
         print(f"Found {amount} coins! Total coins: {self.coins}")
         time.sleep(0.5)
 
-    def upgrade_max_hp(self, cost, increase):
-        if self.coins >= cost:
-            self.coins -= cost
-            self.max_hp += increase
-            self.hp = self.max_hp
-            print(f"Upgraded max HP by {increase}.")
-            print(f"Remaining coins: {self.coins}")
-        else:
-            print("Not enough coins to upgrade max HP.")
-        time.sleep(0.5)
-
-    def upgrade_damage(self, cost, increase):
-        if self.coins >= cost:
-            self.coins -= cost
-            self.damage += increase
-            print(f"Upgraded damage by {increase}.")
-            print(f"Remaining coins: {self.coins}")
-        else:
-            print("Not enough coins to upgrade damage.")
-        time.sleep(0.5)
-
-    def view_inventory(self):
-        if len(self.inventory) <= 0:
-            print("you currently don't have anything in your inventory")
-            time.sleep(0.5)
-        else:
-            for key, value in enumerate(self.inventory):
-                print(f"{key + 1} : {value.name}")
-                time.sleep(0.5)
-                player_input = input("Pick an item: ")
-                if player_input.isdigit():
-                    self.use_potion(int(player_input) - 1)
-                else:
-                    pass
-
-    def use_potion(self, player_input):
-            if int(player_input) <= (len(self.inventory)):
-                if self.hp < self.max_hp:
-                    potion = self.inventory[player_input].use()
-                    self.inventory.pop(player_input)
-                    if potion < 999:
-                        self.hp += potion
-                        if self.hp > self.max_hp:
-                            self.hp = self.max_hp
-                    else:
-                        self.hp = self.max_hp
-                else:
-                    print("Can't use a potion while your health is full")
-                    time.sleep(0.5)
-            else:
-                pass
-
-    def donate_to_charity(self, amount):
-        if self.coins >= amount:
-            self.coins -= amount
-            self.charity_donation += amount
-            print(f"Donated {amount} coins to charity. Total donations: {self.charity_donation}")
-        else:
-            print("Not enough coins to donate to charity.")
-        time.sleep(0.5)
-
+    
 class Barbarian(Character):
     def __init__(self):
         super().__init__("Barbarian", (120, 150), (100, 120), "Killing Blow", 
@@ -257,16 +186,37 @@ class Mage(Character):
         return self.damage * 2
 
     def lightning_ball(self):
-        if random.random() < 0.5:  # 50% chance
-            print("Lightning Ball hit both the monster and the Mage!")
-            time.sleep(0.5)
-            self.hp -= self.damage * 2
-        return self.damage * 2
+        if random.random() < 0.2:  # 20% chance to hit self instead
+            print("Lightning Ball backfired and hit the mage!")
+            self.hp -= 10  # Mage takes 10 damage
+            return self.damage * 2
+        else:
+            print("Lightning Ball missed the monster!")
+            return 0
 
     def ice_bolt(self):
-        if random.random() < 0.25:  # 25% chance to freeze
-            print("Ice Bolt freezes the monster!")
-            time.sleep(0.5)
-            return "freeze"
+        if random.random() < 0.3:  # 30% chance to freeze the monster
+            print("Ice Bolt froze the monster!")
+            return 0
         else:
             return self.damage
+
+# Items
+class Item:
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+
+class HealingPotion(Item):
+    def __init__(self):
+        super().__init__("Healing Potion", "Heals 20 HP during combat.")
+
+    def use(self, character):
+        character.hp = min(character.hp + 20, character.max_hp)
+
+class DamageBoost(Item):
+    def __init__(self):
+        super().__init__("Damage Boost", "Increases damage by 10 during combat.")
+
+    def use(self, character):
+        character.damage += 10
