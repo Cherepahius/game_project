@@ -1,5 +1,7 @@
 import random
 import time
+from items import Equipment
+
 
 class Monster:
     def __init__(self, name, hp, damage):
@@ -16,6 +18,11 @@ class Monster:
 class TrollWarlord(Monster):
     def __init__(self):
         super().__init__("Troll Warlord", 400, 40)
+        self.loot = random.randint(1,3)
+        if self.loot < 3:
+            self.loot = Equipment(2)
+        else:
+            self.loot = Equipment(5)
 
     def double_swing(self):
         if self.special_cooldown == 0:
@@ -31,6 +38,13 @@ class TrollWarlord(Monster):
 class RegularTroll(Monster):
     def __init__(self):
         super().__init__("Regular Troll", 250, 25)
+        self.loot = random.randint(1,3)
+        if self.loot < 3:
+            self.loot = Equipment(1)
+        else:
+            self.loot = Equipment(5)
+        
+
 
     def attack(self):
         print(f"{self.name} swings its club wildly, trying to hit you!")
@@ -39,10 +53,15 @@ class RegularTroll(Monster):
 class SkeletonWarrior(Monster):
     def __init__(self):
         super().__init__("Skeleton Warrior", 200, 30)
+        self.loot = random.randint(1,2)
+        if self.loot == 1:
+            self.loot = Equipment(1)
+        else:
+            self.loot = Equipment(4)
 
     def attack(self):
         if random.random() < 0.25:
-            print(f"{self.name} blocks the attack with its shield!")
+            print(f"{self.name} blocks from attacks with its shield!")
             return 0, False
         else:
             print(f"{self.name} slashes with its rusty sword, aiming for your weak spots!")
@@ -51,6 +70,7 @@ class SkeletonWarrior(Monster):
 class Goblin(Monster):
     def __init__(self):
         super().__init__("Goblin", 150, 20)
+        self.loot = Equipment(1)
 
     def attack(self):
         print(f"{self.name} jumps around, trying to stab you with its dagger!")
@@ -59,6 +79,11 @@ class Goblin(Monster):
 class Lich(Monster):
     def __init__(self):
         super().__init__("Lich", 450, 60)
+        self.loot = random.randint(1,2)
+        if self.loot == 1:
+            self.loot = Equipment(3)
+        else:
+            self.loot = Equipment(6)
 
     def attack(self):
         if random.random() < 0.5:

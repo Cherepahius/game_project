@@ -1,6 +1,6 @@
 import random
 import time
-from items import Potion, Equipment
+from items import Potion
 
 class Player:
     def __init__(self, name, max_hp, damage, killing_blow_chance=0, dodge_chance=0):
@@ -13,20 +13,17 @@ class Player:
         self.coins = 0
         self.experience = 0
         self.level = 1
-        self.inventory = [Potiion(1)]
+        self.inventory = [Potion(1)]
 
 
     def view_stats(self):
         print (f"level {self.level}\n{self.experience} XP\n you need another {(self.level * 100) - self.experience} to go up a level\n{self.hp} / {self.max_hp} HP\n{self.coins} Coins\nand {self.damage} Strangth")
         time.sleep(0.5)
     
-    def add_item(self):
-        self.inventory.append(Potion(random.randint(1,3)))
-        print("You found a potion")
+    def add_item(self, item):
+        self.inventory.append(item)
+        print(f"You got a {item.name}")
         time.sleep(0.5)
-
-    
-                
 
     def add_equipment(self, equipment):
         upgrade = equipment.use()
@@ -56,11 +53,11 @@ class Player:
             for key, value in enumerate(self.inventory):
                 print(f"{key + 1} : {value.name}")
                 time.sleep(0.5)
-                player_input = input("Pick an item: ")
-                if player_input.isdigit():
-                    self.use_potion(int(player_input) - 1)
-                else:
-                    pass
+            player_input = input("Pick an item: ")
+            if player_input.isdigit():
+                self.use_potion(int(player_input) - 1)
+            else:
+                pass
 
     def use_potion(self, player_input):
             if int(player_input) <= (len(self.inventory)):
@@ -95,9 +92,23 @@ class Player:
         time.sleep(0.5)
         for idx, attack in enumerate(self.attacks, 1):
             print(f"{idx}. {attack['name']}")
-        choice = int(input("Enter the number of your choice: ")) - 1
-        if 0 <= choice < len(self.attacks):
-            return self.attacks[choice]['method']
+        print(f"{idx + 1}. Inventory")
+        choice = input("Enter the number of your choice: ")
+        if choice.isdigit():
+            choice = int(choice) - 1
+            if 0 <= choice < len(self.attacks):
+                return self.attacks[choice]['method']
+            elif choice == len(self.attacks):
+                current_hp = self.hp
+                self.view_inventory()
+                new_hp = self.hp
+                if new_hp > current_hp:
+                    return 1
+                else:
+                    return 0
+            else:
+                print("Invalid choice, defaulting to Double Swing.")
+                return self.attacks[0]['method']
         else:
             print("Invalid choice, defaulting to Double Swing.")
             return self.attacks[0]['method']
@@ -159,6 +170,7 @@ class Mage(Player):
             {"name": "Fireball", "method": "fireball"},
             {"name": "Lightning Ball", "method": "lightning_ball"},
             {"name": "Ice Bolt", "method": "ice_bolt"}
+            
         ]
 
     def fireball(self):
