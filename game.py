@@ -100,6 +100,7 @@ def encounter_monster(player):
 def main_game_loop(player):
     turns = 0
     while True:
+        print("You're traveling through the wilds")
         print("What would you like to do?")
         time.sleep(0.5)
         print("1. Hit the road")
@@ -148,9 +149,10 @@ def main_game_loop(player):
             print("Invalid choice. Please try again.")
 
 def city(player):
+    city_name = ["King's Landing", "Minas Tirith", "Camelot", "Lothlórien", "Stormwind", "Baldur's Gate", "Rivendell", "Braavos", "Whiterun", "Hyrule Castle Town"]
     city_turns = 10
     while city_turns > 0:
-        print("You are in the city. What would you like to do?")
+        print(f"You reached the city of {random.choice(city_name)}. What would you like to do?")
         time.sleep(0.5)
         print("1. Go to the tavern")
         time.sleep(0.5)
