@@ -121,8 +121,6 @@ def encounter_monster(player):
             player.hp -= monster_attack
             print(f"{player.name} HP left: {player.hp}")
 
-            if player_stunned:
-                print(f"The {monster.name}'s attack stunned {player.name}!")
         else:
             print(f"The {monster.name} is stunned and misses its turn!")
 
