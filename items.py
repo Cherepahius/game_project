@@ -16,9 +16,9 @@ class Potion():
        
     def use(self):
         if self.strength == 1:
-            return 50
+            return 25
         elif self.strength == 2:
-            return 100
+            return 75
         else:
             return 999       
 

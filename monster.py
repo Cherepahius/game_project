@@ -1,5 +1,6 @@
 import random
 import time
+from items import Equipment, Potion
 
 class Monster:
     def __init__(self, name, hp, damage):
@@ -8,6 +9,7 @@ class Monster:
         self.hp = hp
         self.damage = damage
         self.cooldowns = {}
+        
 
     def say_something_unclear(self):
         phrases = [
@@ -26,7 +28,10 @@ class Monster:
 class TrollWarlord(Monster):
     def __init__(self):
         super().__init__("Troll Warlord", 400, 40)
-    
+        self.loot_table = [Equipment(2), Equipment(2), Equipment(5)]
+        self.loot_roll = random.randint(0, len(self.loot_table) - 1)
+        self.loot = self.loot_table[self.loot_roll]
+
     def attack(self):
         if self.cooldowns.get("double_swing", 0) == 0:
             if random.random() < 0.25:
@@ -40,10 +45,17 @@ class TrollWarlord(Monster):
 class RegularTroll(Monster):
     def __init__(self):
         super().__init__("Regular Troll", 250, 25)
+        self.loot_table = [Equipment(4), Equipment(1), Equipment(2), Equipment(1)]
+        self.loot_roll = random.randint(0, len(self.loot_table) - 1)
+        self.loot = self.loot_table[self.loot_roll]
+        
 
 class SkeletonWarrior(Monster):
     def __init__(self):
         super().__init__("Skeleton Warrior", 200, 30)
+        self.loot_table = [Equipment(1), Equipment(4), Equipment(4), Equipment(4), Equipment(1), Equipment(5)]
+        self.loot_roll = random.randint(0, len(self.loot_table) - 1)
+        self.loot = self.loot_table[self.loot_roll]
 
     def attack(self):
         if random.random() < 0.25:
@@ -55,10 +67,17 @@ class SkeletonWarrior(Monster):
 class Goblin(Monster):
     def __init__(self):
         super().__init__("Goblin", 150, 20)
+        self.loot_table = [Equipment(1), Potion(1)]
+        self.loot_roll = random.randint(0, len(self.loot_table) - 1)
+        self.loot = self.loot_table[self.loot_roll]
+        
 
 class Lich(Monster):
     def __init__(self):
         super().__init__("Lich", 450, 60)
+        self.loot_table = [Equipment(3), Potion(3), Equipment(6)]
+        self.loot_roll = random.randint(0, len(self.loot_table) - 1)
+        self.loot = self.loot_table[self.loot_roll]
     
     def attack(self):
         if self.cooldowns.get("life_steal", 0) == 0:
