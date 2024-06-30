@@ -1,6 +1,6 @@
 import random
 import time
-from items import Equipment
+from items import Equipment, Potion
 
 class Monster:
     def __init__(self, name, hp, damage):
@@ -44,7 +44,7 @@ class TrollWarlord(Monster):
 class RegularTroll(Monster):
     def __init__(self):
         super().__init__("Regular Troll", 250, 25)
-        self.loot_table = [Equipment(4), Equipment(1), Equipment(2), Equipment(1)]
+        self.loot_table = [Equipment(4), Equipment(1), Equipment(2), Equipment(1), Potion(2)]
         self.loot = random.choice(self.loot_table)
 
 class SkeletonWarrior(Monster):
@@ -63,7 +63,7 @@ class SkeletonWarrior(Monster):
 class Goblin(Monster):
     def __init__(self):
         super().__init__("Goblin", 150, 20)
-        self.loot_table = [Equipment(1)]
+        self.loot_table = [Equipment(1), Potion(1)]
         self.loot = random.choice(self.loot_table)
         
         
@@ -71,7 +71,7 @@ class Goblin(Monster):
 class Lich(Monster):
     def __init__(self):
         super().__init__("Lich", 450, 60)
-        self.loot_table = [Equipment(3), Equipment(6)]
+        self.loot_table = [Equipment(3), Equipment(6), Potion(3)]
         self.loot = random.choice(self.loot_table)
     
     def attack(self):

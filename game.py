@@ -2,7 +2,7 @@ import random
 import time
 from player import Barbarian, Archer, Mage
 from monster import TrollWarlord, RegularTroll, SkeletonWarrior, Goblin, Lich
-from items import Store
+from items import Store, Equipment
 
 
 def game_setup():
@@ -69,7 +69,10 @@ def encounter_monster(player):
             coins_found = random.randint(2, 10)
             player.add_coins(coins_found)
             if loot_drop >= 6:
-                player.add_equipment(monster.loot)
+                if isinstance(monster.loot, Equipment) == True:
+                    player.add_equipment(monster.loot)
+                else:
+                    player.add_item(monster.loot)
             exp_gained = 50
             player.gain_experience(exp_gained)
             print(f"You defeated the {monster.name}!")
@@ -136,8 +139,17 @@ def main_game_loop(player):
                 turns = 0
 
         elif choice == "2":
-            player.hp = min(player.max_hp, player.hp + 5)
-            print(f"You relaxed and recovered. Current HP: {player.hp}/{player.max_hp}")
+            if random.random() <= 0.70:
+                player.hp = min(player.max_hp, player.hp + 5)
+                print(f"You relaxed and recovered. Current HP: {player.hp}/{player.max_hp}")
+            else:
+                print("A monster attacked you!")
+                time.sleep(0.5)
+                encounter_monster(player)
+                if player.hp <= 0:
+                    print("Game over!")
+                    break
+
         elif choice == "3":
             player.view_stats()
         elif choice == "4":
