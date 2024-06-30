@@ -99,11 +99,27 @@ class Player:
         for i, attack in enumerate(attacks, 1):
             print(f"{i}. {attack.replace('_', ' ').title()}")
         print(f"{len(attacks) + 1}. Use Defensive Skill")
+        print(f"{i + 2}. Inventory")
         choice = int(input("Enter the number of your choice: "))
         if choice == len(attacks) + 1:
             return "use_defensive_skill"
-        return attacks[choice - 1]
-    
+        elif choice == i + 2:
+            current_hp = self.hp
+            self.view_inventory()
+            new_hp = self.hp
+            if new_hp > current_hp:
+                print(new_hp > current_hp)
+                return 1
+            else:
+                print(new_hp > current_hp)
+                return 0
+        elif choice >= len(attacks):
+            print("Invalid choice, defaulting to Double Swing.")
+            return attacks[0]
+        else:
+            return attacks[choice - 1]
+            
+              
     def apply_defensive_skill(self):
         if self.cooldowns["defensive_skill"] == 0:
             self.defense_mode = True

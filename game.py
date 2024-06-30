@@ -72,16 +72,19 @@ def encounter_monster(player):
         player.update_defensive_mode()
         attack_choice = player.choose_attack()
         
-        if attack_choice == "use_defensive_skill":
-            if not player.apply_defensive_skill():
-                continue
+        
        
         if attack_choice == 0:
             continue
-        elif attack_choice == "use_potion":
+        elif attack_choice == 1:
             print(f"{player.name} used a potion and now has HP: {player.hp}/{player.max_hp}")
             damage_dealt = 0
             enemy_stunned = False
+        elif attack_choice == "use_defensive_skill":
+            damage_dealt = 0
+            enemy_stunned = False
+            if not player.apply_defensive_skill():
+                continue
         else:
             attack_method = getattr(player, attack_choice, None)
             if attack_method:
