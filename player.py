@@ -14,6 +14,12 @@ class Player:
         self.experience = 0
         self.level = 1
         self.inventory = [Potion(1)]
+        self.cooldowns = {
+            "defensive_skill": 0,
+            "special_attack": 0
+        }
+        self.defense_mode = False
+        self.defense_rounds_left = 0
 
 
     def view_stats(self):
@@ -88,108 +94,179 @@ class Player:
         print(f"You are a {self.name} with {self.hp} HP and {self.damage} damage.")
 
     def choose_attack(self):
-        print("Choose your attack:")
-        time.sleep(0.5)
-        for idx, attack in enumerate(self.attacks, 1):
-            print(f"{idx}. {attack['name']}")
-        print(f"{idx + 1}. Inventory")
-        choice = input("Enter the number of your choice: ")
-        if choice.isdigit():
-            choice = int(choice) - 1
-            if 0 <= choice < len(self.attacks):
-                return self.attacks[choice]['method']
-            elif choice == len(self.attacks):
-                current_hp = self.hp
-                self.view_inventory()
-                new_hp = self.hp
-                if new_hp > current_hp:
-                    return 1
-                else:
-                    return 0
-            else:
-                print("Invalid choice, defaulting to Double Swing.")
-                return self.attacks[0]['method']
+        attacks = self.available_attacks()
+        print("\nChoose your attack:")
+        for i, attack in enumerate(attacks, 1):
+            print(f"{i}. {attack.replace('_', ' ').title()}")
+        print(f"{len(attacks) + 1}. Use Defensive Skill")
+        choice = int(input("Enter the number of your choice: "))
+        if choice == len(attacks) + 1:
+            return "use_defensive_skill"
+        return attacks[choice - 1]
+    
+    def apply_defensive_skill(self):
+        if self.cooldowns["defensive_skill"] == 0:
+            self.defense_mode = True
+            self.defense_rounds_left = 2
+            self.cooldowns["defensive_skill"] = 3
+            self.activate_defensive_skill()
+            return True
         else:
-            print("Invalid choice, defaulting to Double Swing.")
-            return self.attacks[0]['method']
+            print(f"Defensive skill is on cooldown. {self.cooldowns['defensive_skill']} turns remaining.")
+            return False
+
+    def update_defensive_mode(self):
+        if self.defense_mode:
+            self.defense_rounds_left -= 1
+            if self.defense_rounds_left <= 0:
+                self.defense_mode = False
+                print(f"{self.name}'s defensive skill effect has ended.")
+        
+        for skill in self.cooldowns:
+            if self.cooldowns[skill] > 0:
+                self.cooldowns[skill] -= 1
+
+    def activate_defensive_skill(self):
+        pass
+
+    def apply_defensive_skill(self):
+        if self.cooldowns["defensive_skill"] == 0:
+            self.defense_mode = True
+            self.defense_rounds_left = 2
+            self.cooldowns["defensive_skill"] = 3
+            self.activate_defensive_skill()
+            return True
+        else:
+            print(f"Defensive skill is on cooldown. {self.cooldowns['defensive_skill']} turns remaining.")
+            return False
+
+    def update_defensive_mode(self):
+        if self.defense_mode:
+            self.defense_rounds_left -= 1
+            if self.defense_rounds_left <= 0:
+                self.defense_mode = False
+                print(f"{self.name}'s defensive skill effect has ended.")
+        
+        for skill in self.cooldowns:
+            if self.cooldowns[skill] > 0:
+                self.cooldowns[skill] -= 1
+
+    def activate_defensive_skill(self):
+        pass
 
 class Barbarian(Player):
     def __init__(self):
-        super().__init__("Barbarian", random.randint(120, 150), random.randint(100, 120), killing_blow_chance=0.05)
-        self.attacks = [
-            {"name": "Double Swing", "method": "double_swing"},
-            {"name": "Axe Swing", "method": "axe_swing"},
-            {"name": "Whirlwind", "method": "whirlwind"}
-        ]
+        super().__init__("Barbarian", random.randint(220, 250), random.randint(110, 130), 0.1, 0.0)
 
     def double_swing(self):
-        print(f"{self.name} used Double Swing!")
-        return self.damage * 1.5, True
+        if self.cooldowns["special_attack"] == 0:
+            self.cooldowns["special_attack"] = 2
+            print(f"{self.name} used Double Swing!")
+            return int(self.damage * 1.5), True
+        print("Double Swing is on cooldown.")
+        return 0, False
 
     def axe_swing(self):
         print(f"{self.name} used Axe Swing!")
         return self.damage, False
 
     def whirlwind(self):
-        if random.random() < 0.5:
+        if self.cooldowns["special_attack"] == 0:
+            self.cooldowns["special_attack"] = 2
             print(f"{self.name} used Whirlwind!")
-            return self.damage, False
-        else:
-            print(f"{self.name} used Whirlwind but only got a headache!")
-            return 0, False
+            if random.random() < 0.5:
+                return self.damage, False
+            else:
+                print("Whirlwind failed, and Barbarian got a headache.")
+                return 0, False
+        print("Whirlwind is on cooldown.")
+        return 0, False
+
+    def activate_defensive_skill(self):
+        self.hp += 20
+        self.defense_rounds_left = 2
+        print(f"{self.name} used Fortitude! HP increased by 20 for 2 rounds.")
+
+    def available_attacks(self):
+        return ["double_swing", "axe_swing", "whirlwind"]
 
 class Archer(Player):
     def __init__(self):
-        super().__init__("Archer", random.randint(95, 110), random.randint(95, 105), dodge_chance=0.05)
-        self.attacks = [
-            {"name": "Double Arrow", "method": "double_arrow"},
-            {"name": "Fire Arrow", "method": "fire_arrow"},
-            {"name": "Dagger Attack", "method": "dagger_attack"}
-        ]
+        super().__init__("Archer", random.randint(195, 210), random.randint(105, 115), 0.0, 0.1)
 
     def double_arrow(self):
-        print(f"{self.name} used Double Arrow!")
-        return self.damage * 2, False
+        if self.cooldowns["special_attack"] == 0:
+            self.cooldowns["special_attack"] = 2
+            print(f"{self.name} used Double Arrow!")
+            return int(self.damage * 2), False
+        print("Double Arrow is on cooldown.")
+        return 0, False
 
     def fire_arrow(self):
-        print(f"{self.name} used Fire Arrow!")
-        return self.damage * 1.5, False
+        if self.cooldowns["special_attack"] == 0:
+            self.cooldowns["special_attack"] = 2
+            print(f"{self.name} used Fire Arrow!")
+            return int(self.damage * 1.5), False
+        print("Fire Arrow is on cooldown.")
+        return 0, False
 
     def dagger_attack(self):
-        print(f"{self.name} used Dagger Attack!")
-        if random.random() < 0.25:
-            print(f"{self.name} uses Dagger Attack and makes the enemy miss!")
-            return self.damage, True
-        else:
-            return self.damage, False
+        if self.cooldowns["special_attack"] == 0:
+            self.cooldowns["special_attack"] = 2
+            print(f"{self.name} used Dagger Attack!")
+            if random.random() < 0.75:
+                return self.damage, True
+            else:
+                print(f"{self.name} used Dagger Attack but it missed.")
+                return 0, False
+        print("Dagger Attack is on cooldown.")
+        return 0, False
+
+    def activate_defensive_skill(self):
+        self.hp += 15
+        self.defense_rounds_left = 2
+        print(f"{self.name} used Shadow Cloak! HP increased by 15 for 2 rounds.")
+
+    def available_attacks(self):
+        return ["double_arrow", "fire_arrow", "dagger_attack"]
 
 class Mage(Player):
     def __init__(self):
-        super().__init__("Mage", random.randint(70, 90), random.randint(120, 150), killing_blow_chance=0.05)
-        self.attacks = [
-            {"name": "Fireball", "method": "fireball"},
-            {"name": "Lightning Ball", "method": "lightning_ball"},
-            {"name": "Ice Bolt", "method": "ice_bolt"}
-            
-        ]
+        super().__init__("Mage", random.randint(170, 190), random.randint(130, 150), 0.1, 0.0)
 
-    def fireball(self):
-        print(f"{self.name} used Fireball!")
-        return self.damage * 2, False
+    def fire_ball(self):
+        if self.cooldowns["special_attack"] == 0:
+            self.cooldowns["special_attack"] = 2
+            print(f"{self.name} used Fire Ball!")
+            return int(self.damage * 2), False
+        print("Fire Ball is on cooldown.")
+        return 0, False
 
     def lightning_ball(self):
-        print(f"{self.name} used Lightning Ball!")
-        if random.random() < 0.5:
-            print(f"{self.name} uses Lightning Ball and it backfires!")
-            self.hp -= self.damage * 0.5
-            return self.damage * 2, False
-        else:
-            return self.damage * 2, False
+        if self.cooldowns["special_attack"] == 0:
+            self.cooldowns["special_attack"] = 2
+            print(f"{self.name} used Lightning Ball!")
+            if random.random() < 0.5:
+                print(f"{self.name} got struck by the lightning!")
+                self.hp -= self.damage // 2
+            return int(self.damage * 2), False
+        print("Lightning Ball is on cooldown.")
+        return 0, False
 
     def ice_bolt(self):
-        print(f"{self.name} used Ice Bolt!")
-        if random.random() < 0.25:
-            print(f"{self.name} uses Ice Bolt and freezes the enemy!")
-            return self.damage, True
-        else:
+        if self.cooldowns["special_attack"] == 0:
+            self.cooldowns["special_attack"] = 2
+            print(f"{self.name} used Ice Bolt!")
+            if random.random() < 0.25:
+                return self.damage, True
             return self.damage, False
+        print("Ice Bolt is on cooldown.")
+        return 0, False
+
+    def activate_defensive_skill(self):
+        self.hp += 10
+        self.defense_rounds_left = 2
+        print(f"{self.name} used Ice Barrier! HP increased by 10 for 2 rounds.")
+
+    def available_attacks(self):
+        return ["fire_ball", "lightning_ball", "ice_bolt"]

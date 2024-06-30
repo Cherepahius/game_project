@@ -4,7 +4,33 @@ from player import Barbarian, Archer, Mage
 from monster import TrollWarlord, RegularTroll, SkeletonWarrior, Goblin, Lich
 from items import Store, Equipment
 
+def display_forest():
+    forest_art = """
+      ///\\\///\\\///\\\///\\\
+     ////\\\\////\\\\////\\\\
+    /////\\\\\/////\\\\\/////\\\\\
+    /////\\\\/////\\\\/////\\\\
+    """
+    print(forest_art)
+    time.sleep(1)
 
+def display_city():
+    city_art = """
+      _____||_____
+     /////////////\\
+    ///////////////\\
+   |    _    _    ||
+   |[] | |  | | [] ||
+   |   | |  | |    ||
+   |   | |  | |    ||
+   |   |_|  |_|    ||
+   |      __       ||
+   |     |  |      ||
+  /|[]   |  |  []  |\\
+ / |    _|  |_     | \\
+    """
+    print(city_art)
+    time.sleep(1)
 def game_setup():
     print("Welcome to the adventure game!")
     time.sleep(0.5)
@@ -43,10 +69,16 @@ def encounter_monster(player):
     while player.hp > 0 and monster.hp > 0:
         print(f"{player.name} HP: {player.hp}/{player.max_hp}")
         print(f"{monster.name} HP: {monster.hp}")
+        player.update_defensive_mode()
         attack_choice = player.choose_attack()
+        
+        if attack_choice == "use_defensive_skill":
+            if not player.apply_defensive_skill():
+                continue
+       
         if attack_choice == 0:
             continue
-        elif attack_choice == 1:
+        elif attack_choice == "use_potion":
             print(f"{player.name} used a potion and now has HP: {player.hp}/{player.max_hp}")
             damage_dealt = 0
             enemy_stunned = False
@@ -55,7 +87,8 @@ def encounter_monster(player):
             if attack_method:
                 damage_dealt, enemy_stunned = attack_method()
             else:
-                damage_dealt, enemy_stunned = player.normal_attack()
+                print(f"Invalid attack choice: {attack_choice}")
+                continue
 
             if random.random() < player.killing_blow_chance:
                 print(f"{player.name} landed a killing blow!")
@@ -65,17 +98,11 @@ def encounter_monster(player):
         print(f"{monster.name} HP left: {monster.hp}")
 
         if monster.hp <= 0:
-            loot_drop = random.randint(1, 10)
             coins_found = random.randint(2, 10)
             player.add_coins(coins_found)
-            if loot_drop >= 6:
-                if isinstance(monster.loot, Equipment) == True:
-                    player.add_equipment(monster.loot)
-                else:
-                    player.add_item(monster.loot)
             exp_gained = 50
             player.gain_experience(exp_gained)
-            print(f"You defeated the {monster.name}!")
+            print(f"You defeated the {monster.name} and gained {coins_found} coins and {exp_gained} experience points!")
             break
 
         if not enemy_stunned:
@@ -118,6 +145,7 @@ def main_game_loop(player):
         choice = input("Enter the number of your choice: ")
 
         if choice == "1":
+            display_forest()
             turns += 1
             if random.random() < 0.05:
                 player.hp = player.max_hp
@@ -161,6 +189,7 @@ def main_game_loop(player):
             print("Invalid choice. Please try again.")
 
 def city(player):
+    display_city()
     city_name = ["King's Landing", "Minas Tirith", "Camelot", "Lothlórien", "Stormwind", "Baldur's Gate", "Rivendell", "Braavos", "Whiterun", "Hyrule Castle Town"]
     city_turns = 10
     while city_turns > 0:
