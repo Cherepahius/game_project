@@ -193,8 +193,9 @@ def city(player):
     display_city()
     city_name = ["King's Landing", "Minas Tirith", "Camelot", "Lothlórien", "Stormwind", "Baldur's Gate", "Rivendell", "Braavos", "Whiterun", "Hyrule Castle Town"]
     city_turns = 10
+    random_name = random.choice(city_name)
     while city_turns > 0:
-        print(f"You reached the city of {random.choice(city_name)}. What would you like to do?")
+        print(f"You reached the city of {random_name}. What would you like to do?")
         time.sleep(0.5)
         print("1. Go to the tavern")
         time.sleep(0.5)
