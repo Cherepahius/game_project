@@ -1,94 +1,73 @@
 import random
 import time
-from items import Equipment
-
 
 class Monster:
     def __init__(self, name, hp, damage):
         self.name = name
+        self.max_hp = hp
         self.hp = hp
         self.damage = damage
-        self.special_cooldown = 0
+        self.cooldowns = {}
+
+    def say_something_unclear(self):
+        phrases = [
+            "Grrr... Arrgh...",
+            "Blargh... Hisss...",
+            "Raaaaa...",
+            "Hissss... Grooo...",
+        ]
+        print(f"{self.name} says: {random.choice(phrases)}")
 
     def attack(self):
-        if random.random() < 0.5:
-            print(f"{self.name} mumbles something unclear...")
+        self.say_something_unclear()
+        time.sleep(0.5)
         return self.damage, False
 
 class TrollWarlord(Monster):
     def __init__(self):
         super().__init__("Troll Warlord", 400, 40)
-        self.loot = random.randint(1,3)
-        if self.loot < 3:
-            self.loot = Equipment(2)
-        else:
-            self.loot = Equipment(5)
-
-    def double_swing(self):
-        if self.special_cooldown == 0:
-            self.special_cooldown = 2
-            return self.damage * 2, True
-        else:
-            return self.attack()
-
+    
     def attack(self):
-        print(f"{self.name} is so angry and eager that it makes an RKO out of nowhere, dealing damage!")
-        return self.damage, False
+        if self.cooldowns.get("double_swing", 0) == 0:
+            if random.random() < 0.25:
+                self.cooldowns["double_swing"] = 2
+                print(f"{self.name} is so angry and eager that he performs a double swing!")
+                return self.damage * 2, False
+        self.cooldowns["double_swing"] = max(0, self.cooldowns.get("double_swing", 0) - 1)
+        print(f"{self.name} performs a regular attack.")
+        return super().attack()
 
 class RegularTroll(Monster):
     def __init__(self):
         super().__init__("Regular Troll", 250, 25)
-        self.loot = random.randint(1,3)
-        if self.loot < 3:
-            self.loot = Equipment(1)
-        else:
-            self.loot = Equipment(5)
-        
-
-
-    def attack(self):
-        print(f"{self.name} swings its club wildly, trying to hit you!")
-        return self.damage, False
 
 class SkeletonWarrior(Monster):
     def __init__(self):
         super().__init__("Skeleton Warrior", 200, 30)
-        self.loot = random.randint(1,2)
-        if self.loot == 1:
-            self.loot = Equipment(1)
-        else:
-            self.loot = Equipment(4)
 
     def attack(self):
         if random.random() < 0.25:
-            print(f"{self.name} blocks from attacks with its shield!")
+            print(f"{self.name} blocks the attack with his shield!")
             return 0, False
-        else:
-            print(f"{self.name} slashes with its rusty sword, aiming for your weak spots!")
-            return self.damage, False
+        print(f"{self.name} performs a regular attack.")
+        return super().attack()
 
 class Goblin(Monster):
     def __init__(self):
         super().__init__("Goblin", 150, 20)
-        self.loot = Equipment(1)
-
-    def attack(self):
-        print(f"{self.name} jumps around, trying to stab you with its dagger!")
-        return self.damage, False
 
 class Lich(Monster):
     def __init__(self):
         super().__init__("Lich", 450, 60)
-        self.loot = random.randint(1,2)
-        if self.loot == 1:
-            self.loot = Equipment(3)
-        else:
-            self.loot = Equipment(6)
-
+    
     def attack(self):
-        if random.random() < 0.5:
-            print(f"{self.name} performs a killing blow!")
-            return 300, False
-        else:
-            print(f"{self.name} casts a dark spell, draining your life force!")
-            return self.damage, False
+        if self.cooldowns.get("life_steal", 0) == 0:
+            if random.random() < 0.25:
+                self.cooldowns["life_steal"] = 2
+                life_steal_amount = int(self.hp * 0.3)
+                self.hp = min(self.max_hp, self.hp + life_steal_amount)
+                print(f"{self.name} performs a life steal, dealing {life_steal_amount} damage and healing himself for the same amount!")
+                return life_steal_amount, False
+        self.cooldowns["life_steal"] = max(0, self.cooldowns.get("life_steal", 0) - 1)
+        print(f"{self.name} performs a regular attack.")
+        return super().attack()
